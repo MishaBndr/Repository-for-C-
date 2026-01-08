@@ -1,241 +1,428 @@
-﻿Console.WriteLine("Добро пожаловать в игру \"Крестики-нолики\"!\nНаше поле: ");
-char[,] matrix = new char[,]
-{
-    { '#', '#', '#' },
-    { '#', '#', '#' },
-    { '#', '#', '#' }
-};
-for (int i = 0; i < 3; i++)
-{
-    Console.WriteLine("  ---    ---    ---");
-    
-    for (int j = 0; j < 3; j++)
-    {
-        Console.Write(" | " + matrix[i, j] + " | ");
-    } 
-    Console.WriteLine();
-}
-Console.WriteLine("  ---    ---    ---");
-Console.WriteLine("Выберите сторону: X или O (вводите с английской раскладкой): ");
-char team = char.Parse(Console.ReadLine());
+﻿using System;
+using System.Collections.Generic;
 
-if (team == 'X')
-{
-    while (true)
-    {
-        Console.WriteLine("Выберите координаты позиции вашего хода: ");
-        int positionX = int.Parse(Console.ReadLine());
-        int positionY = int.Parse(Console.ReadLine());
-        
-        if ((positionX < 1 || positionX > 3) || (positionY < 1 || positionY > 3)) 
-        {   
-            Console.WriteLine("Некорректная координата! Выберите в диапазоне от 1 до 3 включительно!");
-            break;
-        }
-        else
-        {
-            matrix[positionX - 1, positionY - 1] = 'X';
-        }
-        
-        for (int i = 0; i < 3; i++)
-        {
-            Console.WriteLine("  ---    ---    ---");
+class Game{
+    public const int countPlayer = 3;
+    private List<string> deck = new List<string>();
+    private List<string>[] players = new List<string>[countPlayer];
+    private string[] values = { "6","7","8","9","10","B","D","K","T" };
     
-            for (int j = 0; j < 3; j++)
-            {
-                Console.Write(" | " + matrix[i, j] + " | ");
-            } 
-            Console.WriteLine();
+    char trumpSuit;
+    Random rand = new Random();
+    
+    int GetCardValue(string value){
+        for(int i = 0; i < values.Length; i++){
+            if(values[i] == value)
+                return i;
         }
-        Console.WriteLine("  ---    ---    ---");
-        
-        Random random = new Random();
-        int randPosX =  random.Next(0, 3);
-        int randPosY =  random.Next(0, 3);
-        
-        if (matrix[randPosX, randPosY] == '#')
+        return -1;
+    }
+    
+    public void CreateDeck(){
+        string[] suits = {"♥","♦","♣","♠"};
+        string[] meent = {"6","7","8","9","10","B","D","K","T"};
+
+        for (int i = 0; i < suits.Length; i++)
         {
-            matrix[randPosX, randPosY] = 'O';
-        }
-        else
-        {
-            while (matrix[randPosX, randPosY] != '#') 
+            for (int j = 0; j < meent.Length; j++)
             {
-                randPosX =  random.Next(0, 3);
-                randPosY =  random.Next(0, 3);
-                if (matrix[randPosX, randPosY] == '#')
-                {
-                    matrix[randPosX, randPosY] = 'O';
-                    break;
+                deck.Add(suits[i] + meent[j]);
+            }
+        }
+
+    }
+
+    public void ShowDeck() {
+        Console.WriteLine("Колода:");
+        foreach (string card in deck){
+            Console.Write(card + " ");     
+        }     
+        Console.WriteLine();
+    }
+    
+    public void Cards(){
+        for (int i = 0; i < countPlayer; i++){
+            players[i] = new List<string>();
+            for (int j = 0; j < 6; j++){
+                if (deck.Count == 1) {
+                    players[i].Add(deck[0]);
+                    deck.RemoveAt(0);
+                } else {
+                    players[i].Add(deck[0]);
+                    deck.RemoveAt(0);
                 }
             }
         }
-        
-        Console.WriteLine("Ход компьютера. Поле: ");
-        for (int i = 0; i < 3; i++)
-        {
-            Console.WriteLine("  ---    ---    ---");
-    
-            for (int j = 0; j < 3; j++)
-            {
-                Console.Write(" | " + matrix[i, j] + " | ");
-            } 
-            Console.WriteLine();
-        }
-        
-        Console.WriteLine("  ---    ---    ---");
-        if ((matrix[0, 0] == 'X' && matrix[0, 1] == 'X' && matrix[0, 2] == 'X') ||
-            (matrix[1, 0] == 'X' && matrix[1, 1] == 'X' && matrix[1, 2] == 'X') ||
-            (matrix[2, 0] == 'X' && matrix[2, 1] == 'X' && matrix[2, 2] == 'X'))
-        {
-            Console.WriteLine("Победа!");
-            break;
-        }
-        else if ((matrix[0, 0] == 'X' && matrix[1, 0] == 'X' && matrix[2, 0] == 'X') ||
-                 (matrix[0, 1] == 'X' && matrix[1, 1] == 'X' && matrix[2, 1] == 'X') ||
-                 (matrix[0, 2] == 'X' && matrix[1, 2] == 'X' && matrix[2, 2] == 'X'))
-        {
-            Console.WriteLine("Победа!");
-            break;
-        }
-        else if ((matrix[0, 0] == 'X' && matrix[1, 1] == 'X' && matrix[2, 2] == 'X') ||
-                 (matrix[0, 2] == 'X' && matrix[1, 1] == 'X' && matrix[2, 0] == 'X'))
-        {
-            Console.WriteLine("Победа!");
-            break;
-        }
-        if ((matrix[0, 0] == 'O' && matrix[0, 1] == 'O' && matrix[0, 2] == 'O') ||
-            (matrix[1, 0] == 'O' && matrix[1, 1] == 'O' && matrix[1, 2] == 'O') ||
-            (matrix[2, 0] == 'O' && matrix[2, 1] == 'O' && matrix[2, 2] == 'O'))
-        {
-            Console.WriteLine("Поражение!");
-            break;
-        }
-        else if ((matrix[0, 0] == 'O' && matrix[1, 0] == 'O' && matrix[2, 0] == 'O') ||
-                 (matrix[0, 1] == 'O' && matrix[1, 1] == 'O' && matrix[2, 1] == 'O') ||
-                 (matrix[0, 2] == 'O' && matrix[1, 2] == 'O' && matrix[2, 2] == 'O'))
-        {
-            Console.WriteLine("Поражение!");
-            break;
-        }
-        else if ((matrix[0, 0] == 'O' && matrix[1, 1] == 'O' && matrix[2, 2] == 'O') ||
-                 (matrix[0, 2] == 'O' && matrix[1, 1] == 'O' && matrix[2, 0] == 'O'))
-        {
-            Console.WriteLine("Поражение!");
-            break;
+    }
+
+    public void ShowCardPlayer(int indexPlayer){
+        Console.Write($"Карты игрока {indexPlayer+1}: ");
+        for(int i = 0; i < players[indexPlayer].Count; i++){
+            Console.Write($"[{i}] - {players[indexPlayer][i]}  ");
         }
     }
-}
-else if (team == 'O')
-{
-    while (true)
-    {
-        Console.WriteLine("Выберите координаты позиции вашего хода: ");
-        int positionX = int.Parse(Console.ReadLine());
-        int positionY = int.Parse(Console.ReadLine());
-        
-        if ((positionX < 1 || positionX > 3) || (positionY < 1 || positionY > 3)) 
-        {   
-            Console.WriteLine("Некорректная координата! Выберите в диапазоне от 1 до 3 включительно!");
-            break;
-        }
-        else
-        {
-            matrix[positionX - 1, positionY - 1] = 'O';
-        }
-        
-        for (int i = 0; i < 3; i++)
-        {
-            Console.WriteLine("  ---    ---    ---");
     
-            for (int j = 0; j < 3; j++)
-            {
-                Console.Write(" | " + matrix[i, j] + " | ");
-            } 
-            Console.WriteLine();
+    public void ShowTrump(){
+        Console.Write($"Масть: {deck[deck.Count-1]}");
+    }
+    
+    public bool CanBeat(string attacker, string defender){
+        if(attacker[0] == defender[0]){
+            if(GetCardValue(defender.Substring(1)) > GetCardValue(attacker.Substring(1))){
+                return true;
+            } else {
+                return false;
+            }
+        } else if(defender[0] == trumpSuit && attacker[0] != trumpSuit){
+            return true;
+        } else {
+            return false;
         }
-        Console.WriteLine("  ---    ---    ---");
-        
-        Random random = new Random();
-        int randPosX =  random.Next(0, 3);
-        int randPosY =  random.Next(0, 3);
+    }
+    
 
-        if (matrix[randPosX, randPosY] == '#')
-        {
-            matrix[randPosX, randPosY] = 'X';
+    public void RefillHands(){
+        for(int i = 0; i < players.Length; i++){
+            while(players[i].Count < 6 && deck.Count > 0){
+                string card = deck[0];
+                players[i].Add(card);
+                deck.RemoveAt(0);
+            }
+            
         }
-        else
+    }
+    
+    public List<string> GetPlayerCards(int index) {
+        return players[index];
+    }
+    
+    public List<string>[] Players {
+        get { return players; }
+    }
+    
+    public void ShuffleDeck(){
+        if (deck.Count <= 1) return;
+        for (int i = deck.Count - 1; i > 0; i--){
+            int j = rand.Next(i + 1);
+            string temp = deck[i];
+            deck[i] = deck[j];
+            deck[j] = temp;
+        }
+        if (deck.Count > 0){
+            trumpSuit = deck[deck.Count-1][0];
+        }
+    }
+    
+
+}
+
+class Table{
+    private List<string> attackCard = new List<string>();
+    private List<string> defenseCard = new List<string>();
+    
+    public void ClearTable(){
+        attackCard.Clear();
+        defenseCard.Clear();
+    }
+    
+    public bool IsEmpty(){
+        if(attackCard.Count == 0 && defenseCard.Count == 0) return true;
+        else return false;
+    }
+    
+    public bool CanAddAttackCard(string card){
+        if (attackCard.Count == 0) return false;
+        string value = card.Substring(1);
+        for(int i = 0; i < attackCard.Count; i++){
+            if(value == attackCard[i].Substring(1)) return true;
+        }
+        for(int i = 0; i < defenseCard.Count; i++){
+            if(defenseCard[i] != null && value == defenseCard[i].Substring(1)) return true;
+        }
+        return false;
+
+    }
+    
+    public bool AllCardsDefended(){
+        for(int i = 0; i < defenseCard.Count; i++){
+            if(defenseCard[i] == null) return false;
+        }
+        return true;
+    }
+    
+    public void AddAttackCard(string card){
+        attackCard.Add(card);
+        defenseCard.Add(null);
+    }
+    
+    public void AddDefenseCard(string card, int index){ defenseCard[index] = card; }
+    
+    public void show(){
+        Console.Write("Атака: ");
+        for(int i = 0; i < attackCard.Count; i++){
+            Console.Write($"{attackCard[i]}\t");
+        }
+        
+        Console.Write("\nЗащита: ");
+        for(int i = 0; i < defenseCard.Count; i++){
+            if(defenseCard[i] == null) Console.Write("?\t");
+            else Console.Write($"{defenseCard[i]}\t");
+        }
+    }
+    
+    public List<string> CollectCards(){
+        List<string> result = new List<string>();
+        for(int i = 0; i < attackCard.Count; i++){
+            if(attackCard[i] != null && attackCard[i] != "") result.Add(attackCard[i]);
+        }
+        for(int i = 0; i < defenseCard.Count; i++){
+            if(defenseCard[i] != null && defenseCard[i] != "") result.Add(defenseCard[i]);
+        }
+        ClearTable();
+        return result;
+    }
+    
+    public List<string> GetAttackCards(){ return attackCard; }
+    
+    public List<string> GetDefenseCards(){ return defenseCard; }
+    
+    public int AttackCount() { return attackCard.Count; }
+
+    public string GetAttackCard(int index) { return attackCard[index]; }
+    
+}
+
+class DurakGame
+{
+    private Game game;
+    private Table table;
+    private int attackerIndex;
+    private int defenderIndex;
+
+    public DurakGame()
+    {
+        game = new Game();
+        table = new Table();
+        attackerIndex = 0;
+        defenderIndex = 1;
+
+        game.CreateDeck();
+        game.ShuffleDeck();
+        game.Cards();
+    }
+
+    private void Line()
+    {
+        Console.WriteLine("\n========================================================================");
+    }
+
+    private void ShowTable()
+    {
+        Console.Clear();
+        Line();
+        game.ShowTrump();
+        Line();
+        Console.WriteLine("Сейчас карт на столе:");
+        table.show();
+        Line();
+    }
+
+    private int InputCardIndex(int playerIndex)
+    {
+        int index;
+        while (int.TryParse(Console.ReadLine(), out index) == false || index < -1 || index >= game.Players[playerIndex].Count)
         {
-            while (matrix[randPosX, randPosY] != '#') 
+            Console.WriteLine("Некорректный номер, введите ещё раз:");
+        }
+        return index;
+    }
+
+    private int GameOver()
+    {
+        int playersWithCards = 0;
+        int lastPlayerWithCards = -1;
+
+        for (int i = 0; i < game.Players.Length; i++)
+        {
+            if (game.Players[i].Count > 0)
             {
-                randPosX =  random.Next(0, 3);
-                randPosY =  random.Next(0, 3);
-                if (matrix[randPosX, randPosY] == '#')
-                {
-                    matrix[randPosX, randPosY] = 'X';
-                    break;
-                }
+                playersWithCards++;
+                lastPlayerWithCards = i;
             }
         }
-        
-        for (int i = 0; i < 3; i++)
+
+        if (playersWithCards == 1)
+            return lastPlayerWithCards;
+        else
+            return -1;
+    }
+
+    public void Start()
+    {
+        while (true)
         {
-            Console.WriteLine("  ---    ---    ---");
-    
-            for (int j = 0; j < 3; j++)
+            Console.Clear();
+            Line();
+            game.ShowTrump();
+            Line();
+
+            table.ClearTable();
+            Console.WriteLine("\n=== Новый ход ===");
+
+            Line();
+            Console.WriteLine($"Игрок {attackerIndex + 1}, ваши карты для атаки:");
+            game.ShowCardPlayer(attackerIndex);
+            Line();
+
+            int attackCardIndex;
+            Console.Write("\nВиберіть карту для АТАКИ: ");
+            while (int.TryParse(Console.ReadLine(), out attackCardIndex) == false || attackCardIndex < 0 || attackCardIndex >= game.Players[attackerIndex].Count)
             {
-                Console.Write(" | " + matrix[i, j] + " | ");
-            } 
-            Console.WriteLine();
-        }
-        Console.WriteLine("  ---    ---    ---");
-        
-        if ((matrix[0, 0] == 'O' && matrix[0, 1] == 'O' && matrix[0, 2] == 'O') ||
-            (matrix[1, 0] == 'O' && matrix[1, 1] == 'O' && matrix[1, 2] == 'O') ||
-            (matrix[2, 0] == 'O' && matrix[2, 1] == 'O' && matrix[2, 2] == 'O'))
-        {
-            Console.WriteLine("Победа!");
-            break;
-        }
-        else if ((matrix[0, 0] == 'O' && matrix[1, 0] == 'O' && matrix[2, 0] == 'O') ||
-                 (matrix[0, 1] == 'O' && matrix[1, 1] == 'O' && matrix[2, 1] == 'O') ||
-                 (matrix[0, 2] == 'O' && matrix[1, 2] == 'O' && matrix[2, 2] == 'O'))
-        {
-            Console.WriteLine("Победа!");
-            break;
-        }
-        else if ((matrix[0, 0] == 'O' && matrix[1, 1] == 'O' && matrix[2, 2] == 'O') ||
-                 (matrix[0, 2] == 'O' && matrix[1, 1] == 'O' && matrix[2, 0] == 'O'))
-        {
-            Console.WriteLine("Победа!");
-            break;
-        }
-        if ((matrix[0, 0] == 'X' && matrix[0, 1] == 'X' && matrix[0, 2] == 'X') ||
-            (matrix[1, 0] == 'X' && matrix[1, 1] == 'X' && matrix[1, 2] == 'X') ||
-            (matrix[2, 0] == 'X' && matrix[2, 1] == 'X' && matrix[2, 2] == 'X'))
-        {
-            Console.WriteLine("Поражение!");
-            break;
-        }
-        else if ((matrix[0, 0] == 'X' && matrix[1, 0] == 'X' && matrix[2, 0] == 'X') ||
-                 (matrix[0, 1] == 'X' && matrix[1, 1] == 'X' && matrix[2, 1] == 'X') ||
-                 (matrix[0, 2] == 'X' && matrix[1, 2] == 'X' && matrix[2, 2] == 'X'))
-        {
-            Console.WriteLine("Поражение!");
-            break;
-        }
-        else if ((matrix[0, 0] == 'X' && matrix[1, 1] == 'X' && matrix[2, 2] == 'X') ||
-                 (matrix[0, 2] == 'X' && matrix[1, 1] == 'X' && matrix[2, 0] == 'X'))
-        {
-            Console.WriteLine("Поражение!");
-            break;
+                Console.WriteLine("Некорректный номер, введите ещё раз:");
+            }
+
+            string attackCard = game.Players[attackerIndex][attackCardIndex];
+            table.AddAttackCard(attackCard);
+            game.Players[attackerIndex].RemoveAt(attackCardIndex);
+
+            bool defended = true;
+            bool defenderTookCards = false;
+
+            for (int i = 0; i < table.AttackCount(); i++)
+            {
+                string aCard = table.GetAttackCard(i);
+                ShowTable();
+                Console.WriteLine($"Игрок {defenderIndex + 1}, ваши карты для защиты:");
+                game.ShowCardPlayer(defenderIndex);
+
+                Console.Write("\nВиберіите карту для защиты (-1 если не можете): ");
+                int defenseCardIndex = InputCardIndex(defenderIndex);
+
+                if (defenseCardIndex == -1 || !game.CanBeat(aCard, game.Players[defenderIndex][defenseCardIndex]))
+                {
+                    defended = false;
+                    defenderTookCards = true;
+                    break;
+                }
+                else
+                {
+                    string dCard = game.Players[defenderIndex][defenseCardIndex];
+                    table.AddDefenseCard(dCard, i);
+                    game.Players[defenderIndex].RemoveAt(defenseCardIndex);
+                }
+            }
+
+            if (defended == true)
+            {
+                int defenderStartCount = game.Players[defenderIndex].Count;
+                bool canMore = true;
+                int currentPlayer = (attackerIndex + 1) % Game.countPlayer;
+                int skipCount = 0;
+
+                while (canMore == true)
+                {
+                    if (table.AttackCount() >= defenderStartCount){
+                        canMore = false;
+                        break;
+                    }
+
+                    if (currentPlayer == defenderIndex){
+                        currentPlayer = (currentPlayer + 1) % Game.countPlayer;
+                        continue;
+                    }
+
+                    ShowTable();
+                    Console.WriteLine($"Гравець {currentPlayer + 1} ви можете подкинуть карту или -1 для пропуска:");
+                    game.ShowCardPlayer(currentPlayer);
+
+                    Console.Write("\nВиберите карту для подкидывания (-1 чтобы пропустить): ");
+                    int throwIndex = InputCardIndex(currentPlayer);
+
+                    if (throwIndex == -1){
+                        skipCount++;
+                        currentPlayer = (currentPlayer + 1) % Game.countPlayer;
+                        if (currentPlayer == defenderIndex) currentPlayer = (currentPlayer + 1) % Game.countPlayer;
+                        if (skipCount >= Game.countPlayer - 1) canMore = false;
+                        continue;
+                    }
+
+                    string throwCard = game.Players[currentPlayer][throwIndex];
+                    if (table.CanAddAttackCard(throwCard) == false){
+                        Console.WriteLine("Эту карту нельзя подкидывать. Виберите другую.");
+                        continue;
+                    }
+
+                    table.AddAttackCard(throwCard);
+                    game.Players[currentPlayer].RemoveAt(throwIndex);
+                    skipCount = 0;
+
+                    int lastAtkIndex = table.AttackCount() - 1;
+                    string lastaCard = table.GetAttackCard(lastAtkIndex);
+
+                    ShowTable();
+                    Console.WriteLine($"Игрок {defenderIndex + 1}, ваши карты для защиты:");
+                    game.ShowCardPlayer(defenderIndex);
+
+                    Console.Write("\nВиберите карту для защиты (-1 если не можете): ");
+                    int defenseIndex = InputCardIndex(defenderIndex);
+
+                    if (defenseIndex == -1 || game.CanBeat(lastaCard, game.Players[defenderIndex][defenseIndex]) == false){
+                        defended = false;
+                        defenderTookCards = true;
+                        break;
+                    }
+                    else{
+                        string dCard = game.Players[defenderIndex][defenseIndex];
+                        
+                        table.AddDefenseCard(dCard, lastAtkIndex);
+                        game.Players[defenderIndex].RemoveAt(defenseIndex);
+                        
+                        if (game.Players[defenderIndex].Count == 0){
+                            canMore = false;
+                            break;
+                        }
+                    }
+
+                    currentPlayer = (currentPlayer + 1) % Game.countPlayer;
+                }
+            }
+            if (defenderTookCards == true){
+                Console.WriteLine($"\nИгрок {defenderIndex + 1} забирает все карты!");
+                game.Players[defenderIndex].AddRange(table.CollectCards());
+            }
+            else{
+                Console.WriteLine($"\nИгрок {defenderIndex + 1} отбил все карты!");
+                table.CollectCards();
+            }
+
+            game.RefillHands();
+
+            int loser = GameOver();
+            if (loser != -1){
+                Console.WriteLine($"\nИгра завершена! Игрок {loser + 1} проиграл!");
+                break;
+            }
+
+            if (defenderTookCards == true){
+                attackerIndex = (defenderIndex + 1) % Game.countPlayer;
+                defenderIndex = (attackerIndex + 1) % Game.countPlayer;
+            }
+            else{
+                attackerIndex = (attackerIndex + 1) % Game.countPlayer;
+                defenderIndex = (attackerIndex + 1) % Game.countPlayer;
+            }
+
+            Console.Write("\nНажмите Enter для следующего хода.");
+            Console.ReadLine();
         }
     }
 }
 
-else
+class Program
 {
-    Console.WriteLine("Некорректный выбор, попробуйте снова!");
+    static void Main()
+    {
+        DurakGame durak = new DurakGame();
+        durak.Start();
+    }
 }
-
-//ЕЩЁ НАДО СДЕЛАТЬ ВЫВОД ПОЛЯ ПОСЛЕ КАЖДОГО ХОДА ИИИ... ПО ИДЕЕ ВСЁ
