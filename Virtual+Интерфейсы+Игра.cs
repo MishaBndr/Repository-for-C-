@@ -1,4 +1,113 @@
-﻿class Game
+﻿//задание 1
+/*class Car
+{
+    public virtual void Action()
+    {
+        Console.WriteLine("Car Action");
+    }
+}
+
+class DrivingState : Car
+{
+    public override void Action()
+    {
+        Console.WriteLine("Машина едет, неполадок нет.");
+    }
+}
+
+class StoppedState : Car
+{
+    public override void Action()
+    {
+        Console.WriteLine("Машина заведена, но стоит на месте. Неполадок нет.");
+    }
+}
+
+class OffState : Car
+{
+    public override void Action()
+    {
+        Console.WriteLine("Машина заглушена. Неполадок нет.");
+    }
+}
+ 
+class BrokenState : Car
+{
+    public override void Action()
+    {
+        Console.WriteLine("Машина сломана, движение невозможно!");
+    }
+}
+
+class SlippingState : Car
+{
+    public override void Action()
+    {
+        Console.WriteLine("Вы на бездорожье, машина буксует. Движение затруднено.");
+    }
+}*/
+
+//задание 2
+/*interface IActionOfSmartphone 
+{
+    void Action();
+}
+
+class SmartphoneAcceptCall : IActionOfSmartphone
+{
+    public void Action()
+    {
+        Console.WriteLine("Звонок принят.");
+        
+    }
+}
+
+class SmartphoneDeadPhone : IActionOfSmartphone
+{
+    public void Action()
+    {
+        Console.WriteLine("Телефон разряжен.");
+        
+    }
+}
+
+class SmartphonePhoneLocked : IActionOfSmartphone
+{
+    public void Action()
+    {
+        Console.WriteLine("Телефон заблокирован.");
+        
+    }
+}
+
+class SmartphoneOutOfNetwork : IActionOfSmartphone
+{
+    public void Action()
+    {
+        Console.WriteLine("Отсутствует интернет-соединение.");
+        
+    }
+}
+
+class SmartphoneDisplayDamaged : IActionOfSmartphone
+{
+    public void Action()
+    {
+        Console.WriteLine("Дисплей повреждён, но смартфон всё ещё работает.");
+
+    }
+}
+
+class SmartphoneDisplayCriticallyDamaged : IActionOfSmartphone
+{
+    public void Action()
+    {
+        Console.WriteLine("Критическое повреждение дисплея, дальнейшая работа со смартфоном невозможна.");
+        
+    }
+}*/
+//задание 3
+class Game
 {
     public void FillPole(string[,] pole, int sizeI, int sizeJ, string symbolEmpty)
     {
@@ -141,7 +250,36 @@ class Program
 {
     public static void Main()
     {
+         //задание 1
+         /*List<Car> states = new List<Car>
+         {
+             new DrivingState(),
+             new StoppedState(),
+             new OffState(),
+             new BrokenState(),
+             new SlippingState()
+         };
          
+         Random rnd = new Random();
+         int action = rnd.Next(0, states.Count);
+         states[action].Action();*/
+         
+        //задание 2
+        /*List<IActionOfSmartphone> states = new List<IActionOfSmartphone>
+        {
+            new SmartphoneAcceptCall(),
+            new SmartphoneDeadPhone(),
+            new SmartphonePhoneLocked(),
+            new SmartphoneOutOfNetwork(),
+            new SmartphoneDisplayDamaged(),
+            new SmartphoneDisplayCriticallyDamaged()
+        };
+
+        Random random = new Random();
+        int index = random.Next(0, states.Count);
+        states[index].Action();*/
+        
+        //3 задание
         int sizeI = 10; 
         int sizeJ = 10;
 
